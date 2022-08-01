@@ -9,7 +9,6 @@
 
 ### Docker суулгах
 1. apt -г шинэчилж, Docker програмыг суулгахад хэрэглэгдэх програмуудыг суулгана.
-
 ```shell
 sudo apt-get update
 
@@ -207,4 +206,61 @@ docker compose up -d
 ```shell
 docker compose ps
 docker compose logs -f
+```
+
+### NGINX суулгаж тохируулах
+1. apt -г шинэчилж nginx -ийг суулгах
+```shell
+sudo apt update
+sudo apt install nginx
+```
+
+2. Docker -оор ассан certify-api, certify-admin-app, certify-main-app -уудыг proxy хийх тохиргоог NGINX дээр хийх.
+
+Өөрсдийн SSL хувийн болон нийтийн түлхүүрийг `/etc/nginx/certs` дотор хуулах, доорх certify файлыг `/etc/nginx/sites-available/` зам дээр хуулж, тухайн файлыг `/etc/nginx/sites-enabled/` -тай холбоно. Асааж буй серверийн гадны хаягийг домайн хаягийн тохиргоо дээр нэмэж DNS server дээр бүртгүүлэх ёстой.
+
+```conf
+server {
+	listen 80;
+	server_name <<өөрийн домайн хаяг>>;
+	return 301 https://<<өөрийн домайн хаяг>>$request_uri;
+}
+
+server {
+	listen 443 ssl;
+
+	ssl_certificate /etc/nginx/certs/<<ssl-public-key>>;
+	ssl_certificate_key /etc/nginx/certs/<<ssl-pirvate-key>>;
+
+	server_name <<өөрийн домайн хаяг>>;
+
+	location / {
+		client_max_body_size 100M;
+		proxy_pass http://127.0.0.1:1212;
+	}
+
+	location /service {
+		client_max_body_size 100M;
+		include proxy_params;
+		rewrite ^/service(.*)$ $1 break;
+		proxy_pass http://127.0.0.1:1010;
+	}
+
+	location /service/static {
+        alias <<docker-compose.yaml доторх certify-api -ийн volume хийсэн static-file -ийн замыг оруулах>>;
+	}
+	
+	location /admin {
+		client_max_body_size 100M;
+		rewrite /admin(.*) /$1 break;
+		proxy_pass http://127.0.0.1:1111;
+	}	
+
+}
+```
+
+```shell
+sudo ln -s /etc/nginx/sites-available/таны файл /etc/nginx/sites-enabled/таны файл
+sudo nginx -t
+sudo nginx -s reload
 ```
