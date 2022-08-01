@@ -157,7 +157,8 @@ CERTIFY_CONTRACT_ADDRESS=0xCc546a88Db1aF7d250a2F20Dee42eC436F99e075
 
 # CORS & ALLOWED HOST & CSRF
 ALLOWED_HOSTS=10.0.70.72,localhost,127.0.0.1,<<Таны домайн нэр>>
-CSRF_TRUSTED_ORIGINS=<<Таны домайн нэр>> CORS_ORIGIN_WHITELIST=http://localhost:8080,<<Таны домайн нэр>>
+CSRF_TRUSTED_ORIGINS=<<Таны домайн нэр>>
+CORS_ORIGIN_WHITELIST=http://localhost:8080,<<Таны домайн нэр>>
 CORS_ALLOWED_ORIGINS=http://localhost:8080,<<Таны домайн нэр>>
 ```
 
@@ -190,7 +191,7 @@ window.env = {
 certify-admin.js
 ```javascript
 window.env = {
-  VUE_APP_BACKEND_URL: 'https://certify.num.edu.mn/service', //Certify-api -ийн URL -ийг оруулах
+  VUE_APP_BACKEND_URL: 'https://<<домайн хаяг>>/service', //Certify-api -ийн URL -ийг оруулах
   VERIFY_URL: 'https://', //Үндсэн веб асах URL -ийг оруулах.
   headerHideItems: [],
 };
